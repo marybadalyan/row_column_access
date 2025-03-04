@@ -14,29 +14,29 @@ This program measures the performance difference between row-major and column-ma
 
 ## Build and Run 
 
-```git clone https://github.com/marybadalyan/row_column_Access```
+```git clone https://github.com/marybadalyan/row_column_access```
 
-# Go into the repository:
+### Go into the repository:
 
-```cd row_column_Access```
+```cd row_column_access```
 
-# Generate the build files:
+### Generate the build files:
 
 ```cmake -DCMAKE_BUILD_TYPE=Release -S . -B build```
 
-# Build the project:
+### Build the project:
 
 ```cmake --build build --config Release```
 
 Run the executable generated in the build directory:
 
-```./build/row_column_Access```
+```./build/row_column_access```
 
 Once compiled, run the program:
 
 ```./row_column_access --cols [num] --rows [num]``` // num as in int 
 
-## Example Output
+### Example Output
 ```
 +----------------------------------------+
 |  Rows x Cols | Row Major  | Col Major  |
