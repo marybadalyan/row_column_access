@@ -79,10 +79,10 @@ jobs:
       shell: bash
       run: |
         # Set executable name based on OS
-        executable="Tryout"  # Start with base executable name
+        executable="row_column_access"  # Start with base executable name
         
         if [ "$RUNNER_OS" == "Windows" ]; then
-          executable="Tryout.exe"  # Add .exe for Windows
+          executable="row_column_access.exe"  # Add .exe for Windows
           # On Windows, we should ensure that we run in the correct directory
           executable_path="${{ github.workspace }}\\build\\${{ matrix.build_type }}\\$executable"  # Absolute path for Windows
         else
