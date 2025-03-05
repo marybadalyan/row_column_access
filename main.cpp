@@ -6,27 +6,24 @@
 #include <algorithm>
 #include "kaizen.h"
 
-void row_major(const std::vector<std::vector<int>>& v) {
+void row_major(const std::vector<int>& v,size_t row_count,size_t col_count) {
     volatile int sum = 0;       // Prevent loop optimization for benchmarking
-    if (v.empty()) return;  // Avoid out-of-bounds errors
-    for (size_t i = 0; i < v.size(); i++) {
-        for (size_t j = 0; j < v[i].size(); j++) {
-            sum += v[i][j];  // Row-wise access
+    for(size_t i = 0; i < row_count;++i){
+        for (size_t j = 0; j < col_count; ++j) {  // First iterate columns
+        sum += v[i*col_count + j];  // Column-wise access
         }
     }
 }
 
-void col_major(const std::vector<std::vector<int>>& v) {
+void col_major(const std::vector<int>& v,size_t row_count,size_t col_count) {
     volatile int sum = 0;   // Prevent loop optimization for benchmarking
-    if (v.empty() || v[0].empty()) return;  // Avoid out-of-bounds errors
-
-    for (size_t j = 0; j < v[0].size(); ++j) {  // First iterate columns
-        for (size_t i = 0; i < v.size(); ++i) { // Then iterate rows
-            sum += v[i][j];  // Column-wise access
+    for(size_t j = 0; j < col_count;++j){
+        for (size_t i = 0; i < row_count; ++i) {  // First iterate columns
+        sum += v[i*col_count + j];  // Column-wise access
         }
     }
 }
-
+    
 std::pair<size_t,size_t> process_args(int argc, char* argv[]) {
     zen::cmd_args args(argv, argc);
  
@@ -34,7 +31,7 @@ std::pair<size_t,size_t> process_args(int argc, char* argv[]) {
     auto row_options = args.get_options("--rows");
 
     if (col_options.empty() || row_options.empty()) {
-        zen::log("Error: --cols and --rows arguments are abscent using defaults!");
+        zen::log("Error: --cols and --rows arguments are abscent using default 3000x3000!");
         return {3000, 3000};
     }
 
@@ -45,15 +42,15 @@ int main(int argc, char* argv[]) {
     
     auto [row_count,col_count] = process_args(argc, argv);
   
-    std::vector<std::vector<int>> matrix(row_count, std::vector<int>(col_count, 1));
+    std::vector<int> matrix(row_count * col_count, 1);
 
     auto start = std::chrono::high_resolution_clock::now();
-    row_major(matrix);
+    row_major(matrix,row_count,col_count);
     auto end = std::chrono::high_resolution_clock::now();
     auto row_major_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
     start = std::chrono::high_resolution_clock::now();
-    col_major(matrix);
+    col_major(matrix,row_count,col_count);
     end = std::chrono::high_resolution_clock::now();
     auto col_major_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
