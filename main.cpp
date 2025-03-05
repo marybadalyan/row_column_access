@@ -39,28 +39,31 @@ std::pair<size_t,size_t> process_args(int argc, char* argv[]) {
 
 }
 int main(int argc, char* argv[]) {
-    
-    auto [row_count,col_count] = process_args(argc, argv);
-  
+    auto [row_count, col_count] = process_args(argc, argv);
     std::vector<int> matrix(row_count * col_count, 1);
 
-    auto start = std::chrono::high_resolution_clock::now();
-    row_major(matrix,row_count,col_count);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto row_major_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    int iter = 20;
+    auto row_major_time = 0;
+    auto col_major_time = 0;
+    for (int i = 0; i < iter; ++i) {
+        auto start = std::chrono::high_resolution_clock::now();
+        row_major(matrix, row_count, col_count);
+        auto end = std::chrono::high_resolution_clock::now();
+        row_major_time += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    start = std::chrono::high_resolution_clock::now();
-    col_major(matrix,row_count,col_count);
-    end = std::chrono::high_resolution_clock::now();
-    auto col_major_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        start = std::chrono::high_resolution_clock::now();
+        col_major(matrix, row_count, col_count);
+        end = std::chrono::high_resolution_clock::now();
+        col_major_time += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    }
 
     // Print the result in table format
     std::cout << "\n+----------------------------------------+\n";
     std::cout << "|  Rows x Cols | Row Major  | Col Major  |\n";
     std::cout << "+----------------------------------------+\n";
     std::cout << "| " << std::setw(4) << row_count << " x " << std::setw(4) << col_count
-              << "  | " << std::setw(8) << row_major_time << "ms"
-              << " | " << std::setw(7) << col_major_time << "ms  |\n";
+              << "  | " << std::setw(8) << row_major_time/iter<< "ms"
+              << " | " << std::setw(7) << col_major_time/iter << "ms  |\n";
     std::cout << "+----------------------------------------+\n";
 
     return 0;
