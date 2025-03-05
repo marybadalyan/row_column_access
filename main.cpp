@@ -1,7 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <thread>
-#include <atomic>
 #include <chrono>
 #include <iomanip>
 #include <numeric>
@@ -9,7 +7,8 @@
 #include "kaizen.h"
 
 void row_major(const std::vector<std::vector<int>>& v) {
-    volatile int sum = 0;
+    volatile int sum = 0;       // Prevent loop optimization for benchmarking
+    if (v.empty()) return;  // Avoid out-of-bounds errors
     for (size_t i = 0; i < v.size(); i++) {
         for (size_t j = 0; j < v[i].size(); j++) {
             sum += v[i][j];  // Row-wise access
@@ -18,7 +17,7 @@ void row_major(const std::vector<std::vector<int>>& v) {
 }
 
 void col_major(const std::vector<std::vector<int>>& v) {
-    volatile int sum = 0;
+    volatile int sum = 0;   // Prevent loop optimization for benchmarking
     if (v.empty() || v[0].empty()) return;  // Avoid out-of-bounds errors
 
     for (size_t j = 0; j < v[0].size(); ++j) {  // First iterate columns
@@ -28,20 +27,24 @@ void col_major(const std::vector<std::vector<int>>& v) {
     }
 }
 
-int main(int argc, char* argv[]) {
+std::pair<size_t,size_t> process_args(int argc, char* argv[]) {
     zen::cmd_args args(argv, argc);
-
+ 
     auto col_options = args.get_options("--cols");
     auto row_options = args.get_options("--rows");
 
     if (col_options.empty() || row_options.empty()) {
-        std::cerr << "Error: --cols and --rows arguments are required!" << std::endl;
-        return 1;
+        zen::log("Error: --cols and --rows arguments are abscent using defaults!");
+        return {3000, 3000};
     }
 
-    size_t col_count = static_cast<size_t>(std::atoi(col_options[0].c_str()));
-    size_t row_count = static_cast<size_t>(std::atoi(row_options[0].c_str()));
+    return {static_cast<size_t>(std::atoi(col_options[0].c_str())),static_cast<size_t>(std::atoi(row_options[0].c_str()))};
 
+}
+int main(int argc, char* argv[]) {
+    
+    auto [row_count,col_count] = process_args(argc, argv);
+  
     std::vector<std::vector<int>> matrix(row_count, std::vector<int>(col_count, 1));
 
     auto start = std::chrono::high_resolution_clock::now();
