@@ -84,7 +84,7 @@ jobs:
         if [ "$RUNNER_OS" == "Windows" ]; then
           executable="row_column_access.exe"  # Add .exe for Windows
           # On Windows, we should ensure that we run in the correct directory
-          executable_path="${{ github.workspace }}\\build\\${{ matrix.build_type }}\\$executable"  # Absolute path for Windows
+          executable_path="${{ github.workspace }}/build/${{ matrix.build_type }}/$executable"  # Absolute path for Windows
         else
           executable_path="${{ github.workspace }}/build/$executable"  # Absolute path for Linux/macOS
         fi
