@@ -76,9 +76,9 @@ int main(int argc, char* argv[]) {
     benchmark(default_rows, default_cols, "User-Defined");
 
     // Non-cache-aligned benchmark (not a multiple of 4)
-    benchmark(1025, 1025, "Non-Aligned");
+    benchmark(16, 17, "Non-Aligned");
     // Cache-aligned benchmark (multiples of 4)
-    benchmark(1024, 1024, "Cache-Aligned");
+    benchmark(16, 16, "Cache-Aligned");
     
 
     std::cout << "+----------------------------------------------------------+\n";
